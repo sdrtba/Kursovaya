@@ -1,13 +1,24 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState, useEffect} from "react";
 import {useAuth} from "../contexts/AuthContext.jsx";
+import {api} from "../api/axiosApi.js"
+import { ContactModal } from "../components/ContactModal"
 
 export const NotesPage = () => {
   const [contacts, setContacts] = useState([])
+  const [active, setActive] = useState(false)
+  const [token, ] = useAuth()
+  const [id, setId] = useState(null)
+
+  const openModal = () => setActive(true)
+  const closeModal = () => setActive(false)
+
 
   return (
     <div className="container">
+      <ContactModal active={active} onClose={closeModal} token={token} id={id} />
       <h1>Notes Page</h1>
+      <button onClick={openModal}>Create Contact</button>
       {contacts.map((contact) => (
         <div key={contact.id}>
           <h2>{contact.first_name}</h2>

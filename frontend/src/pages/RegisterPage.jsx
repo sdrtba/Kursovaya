@@ -7,6 +7,7 @@ export const RegisterPage = () => {
   const [login, setLogin] = useState("")
   const [password, setPassword] = useState("")
   const [confirmationPassword, setConfirmationPassword] = useState("")
+  const [isPasswordError, setIsPasswordError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [, setToken] = useAuth()
@@ -14,6 +15,7 @@ export const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      setIsPasswordError(false)
       setLoading(true)
       setError(null)
 
@@ -24,6 +26,7 @@ export const RegisterPage = () => {
         setToken(response.data.access_token)
       } else {
         setError("Ensure that the passwords match and greater then 3")
+        setIsPasswordError(true)
       }
     } catch (err) {
       setError(err.response?.data?.detail || 'Something went wrong')
@@ -56,6 +59,7 @@ export const RegisterPage = () => {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          aria-invalid={isPasswordError ? "true" : ""}
           maxLength={255}
           required
         />
@@ -67,6 +71,7 @@ export const RegisterPage = () => {
           autoComplete="current-password"
           value={confirmationPassword}
           onChange={(e) => setConfirmationPassword(e.target.value)}
+          aria-invalid={isPasswordError ? "true" : ""}
           maxLength={255}
           required
         />
