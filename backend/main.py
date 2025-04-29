@@ -2,8 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from services import create_database, get_db, get_db_user, create_db_user, create_token, get_db_contacts, \
-    get_current_user, get_db_contact, create_db_contact, update_db_contact, delete_db_contact, auth_user
-from schemas import UserCreateS, UserS, ContactS, ContactCreateS
+    get_current_user, get_db_contact, create_db_contact, update_db_contact, delete_db_contact, auth_user, update_user_password
+from schemas import UserCreateS, UserS, ContactS, ContactCreateS, PasswordUpdateS
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -46,6 +46,11 @@ async def create_user(user: UserCreateS, db: Session = Depends(get_db)):
     db_user = await create_db_user(user, db)
 
     return await create_token(db_user)
+
+
+@app.post("/api/change-password")
+async def update_user(pass_update_data: PasswordUpdateS, db: Session = Depends(get_db), user: UserS = Depends(get_current_user)):
+    return await update_user_password(user=user, old_password=pass_update_data.old_password, new_password=pass_update_data.new_password, db=db)
 
 
 @app.get("/api/users/me", response_model=UserS)

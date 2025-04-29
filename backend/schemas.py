@@ -13,6 +13,11 @@ class UserCreateS(UserBaseS):
         from_attributes = True
 
 
+class PasswordUpdateS(BaseModel):
+    old_password: str
+    new_password: str
+
+
 class UserS(UserBaseS):
     id: int
 

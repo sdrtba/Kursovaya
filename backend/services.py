@@ -57,6 +57,22 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
     return db_user
 
 
+async def update_user_password(user: UserS, old_password: str, new_password: str, db: Session):
+    db_user = await get_db_user(login=user.login, db=db)
+
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User Not Found")
+
+    if not db_user.verify_password(old_password):
+        raise HTTPException(status_code=401, detail="Incorrect current password")
+
+    db_user.hashed_password = bcrypt.hash(new_password)
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user
+
+
 async def auth_user(login: str, password: str, db: Session):
     db_user = await get_db_user(login=login, db=db)
 
