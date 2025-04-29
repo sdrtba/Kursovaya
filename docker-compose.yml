@@ -1,0 +1,43 @@
+networks:
+  dev:
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    depends_os:
+      - backend
+      - frontend
+    networks:
+      - dev
+
+  postgres:
+    image: postgres:15
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - dev
+
+  backend:
+    build:
+      context: ./backend
+    env_vile:
+      - ./env
+    depends_on:
+      - postgres
+    networks:
+      - dev
+
+  frontend:
+    build:
+      context: ./frontend
+    networks:
+      - dev
+
+volumes:
+  pgadata:
