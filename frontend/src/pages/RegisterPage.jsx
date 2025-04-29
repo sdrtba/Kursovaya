@@ -39,7 +39,7 @@ export const RegisterPage = () => {
     <main className="container">
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
-        {error && <p>{error}</p>}
+        <p>{error}</p>
         <input
           type="text"
           name="login"
@@ -65,8 +65,8 @@ export const RegisterPage = () => {
         />
         <input
           type="password"
-          name="password"
-          placeholder="Password"
+          name="confirmationPassword"
+          placeholder="Confirmation Password"
           aria-label="Password"
           autoComplete="current-password"
           value={confirmationPassword}

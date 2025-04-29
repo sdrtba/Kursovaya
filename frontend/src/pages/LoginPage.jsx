@@ -39,7 +39,7 @@ export const LoginPage = () => {
     <main className="container">
       <h1>Sign in</h1>
       <form onSubmit={handleSubmit}>
-        {error && <p>{error}</p>}
+        <p>{error}</p>
         <input
           type="text"
           name="login"

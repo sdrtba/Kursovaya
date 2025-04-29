@@ -2,13 +2,13 @@ import React, { useEffect, useState, useRef } from 'react'
 import { api } from '../api/axiosApi.js'
 
 
-export const ContactModal = ({active, onClose, token, id}) => {
+export const ContactModal = ({active, onClose, token, id, getContacts}) => {
   const [firstName, setFirstName] = useState("")
   const [middleName, setMiddleName] = useState("")
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
-  const [error, setError] = useState("")
+  const [status, setStatus] = useState("")
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -29,7 +29,6 @@ export const ContactModal = ({active, onClose, token, id}) => {
 
   const handleCreateContact = async (e) => {
     e.preventDefault()
-
     try {
       await api.post("/contacts", {
         first_name: firstName,
@@ -45,8 +44,34 @@ export const ContactModal = ({active, onClose, token, id}) => {
       })
 
       cleanFormData()
+      setStatus("Contact created")
+      getContacts()
     } catch (err) {
-      setError(err.response?.data?.detail || "Something went wrong")
+      setStatus("Something went wrong")
+    }
+  }
+
+  const handleUpdateContact = async (e) => {
+    e.preventDefault()
+    try {
+      await api.put(`/contacts/${id}?contact_id=${id}`, {
+        first_name: firstName,
+        middle_name: middleName,
+        last_name: lastName,
+        email: email,
+        phone: phone
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        }
+      })
+
+      cleanFormData()
+      setStatus("Contact updated")
+      getContacts()
+    } catch (err) {
+      setStatus("Something went wrong in update")
     }
   }
 
@@ -60,7 +85,7 @@ export const ContactModal = ({active, onClose, token, id}) => {
         <section >
           <form>
             <div>
-              {error && <p>{error}</p>}
+              <p>{status}</p>
               <div>
                 <input type="text" placeholder="Enter first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required/>
               </div>
