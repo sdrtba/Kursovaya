@@ -16,6 +16,7 @@ export const ContactModal = ({active, onClose, token, id, getContacts}) => {
       modalRef.current?.showModal()
     } else {
       modalRef.current?.close()
+      cleanFormData()
     }
   }, [active])
 
@@ -25,6 +26,7 @@ export const ContactModal = ({active, onClose, token, id, getContacts}) => {
     setLastName("")
     setEmail("")
     setPhone("")
+    setStatus("")
   }
 
   const handleCreateContact = async (e) => {
@@ -76,43 +78,76 @@ export const ContactModal = ({active, onClose, token, id, getContacts}) => {
   }
 
   return (
-    <dialog ref={modalRef} onClose={onClose}>
-      <article>
-        <header>
-          <button aria-label="Close" rel="prev" onClick={onClose}></button>
-          <h3>{id ? "Update Lead" : "Create Lead"}</h3>
-        </header>
-        <section >
-          <form>
-            <div>
-              <p>{status}</p>
-              <div>
-                <input type="text" placeholder="Enter first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required/>
-              </div>
-              <div>
-                <input type="text" placeholder="Enter middle name" value={middleName} onChange={(e) => setMiddleName(e.target.value)} required/>
-              </div>
-              <div>
-                <input type="text" placeholder="Enter last name" value={lastName} onChange={(e) => setLastName(e.target.value)} required/>
-              </div>
-              <div>
-                <input type="text" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-              </div>
-              <div>
-                <input type="text" placeholder="Enter phone" value={phone} onChange={(e) => setPhone(e.target.value)}/>
-              </div>
-            </div>
-          </form>
-        </section>
-        <footer>
-          <button role="button" onClick={onClose}>Cancel</button>
-          {id ? (
-            <button className="button is-info" onClick={handleUpdateContact}>Update</button>
-          ) : (
-            <button className="button is-primary" onClick={handleCreateContact}>Create</button>
-          )}
-        </footer>
-      </article>
-    </dialog>
+    <dialog ref={modalRef} onClose={onClose} open>
+  <article style={{ maxWidth: "500px" }}>
+    <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <h3 style={{ margin: 0 }}>{id ? "✏️ Update Contact" : "➕ Create Contact"}</h3>
+      <button
+        aria-label="Close"
+        onClick={onClose}
+        className="close"
+        style={{ marginLeft: "auto" }}
+      ></button>
+    </header>
+
+    <form onSubmit={id ? handleUpdateContact : handleCreateContact}>
+      <section style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {status && (
+          <p
+            style={{
+              color: status.toLowerCase().includes("success") ? "green" : "crimson",
+              textAlign: "center",
+            }}
+          >
+            {status}
+          </p>
+        )}
+
+        <input
+          type="text"
+          placeholder="First name"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Middle name"
+          value={middleName}
+          onChange={(e) => setMiddleName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Last name"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email (optional)"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="tel"
+          placeholder="Phone (optional)"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+      </section>
+
+      <footer style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "1.5rem" }}>
+        <button type="button" onClick={onClose} className="secondary">
+          Cancel
+        </button>
+        <button type="submit" className={id ? "contrast" : "primary"}>
+          {id ? "Update" : "Create"}
+        </button>
+      </footer>
+    </form>
+  </article>
+</dialog>
   )
 }

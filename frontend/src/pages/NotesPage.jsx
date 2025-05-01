@@ -55,42 +55,81 @@ export const NotesPage = () => {
   }, []);
 
   return (
-    <div className="container">
-      <ContactModal active={active} onClose={closeModal} token={token} id={id} getContacts={getContacts} />
-      <h1>Notes Page</h1>
-      <button onClick={openModal}>Create Contact</button>
-      <p>{status}</p>
-      { loaded && contacts ? (
-        <table className="table is-fullwidth">
-          <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Middle Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Last Updated</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          { contacts.map((contact) => (
-            <tr key={contact.id}>
-              <td>{contact.first_name}</td>
-              <td>{contact.middle_name}</td>
-              <td>{contact.last_name}</td>
-              <td>{contact.email}</td>
-              <td>{contact.phone}</td>
-              <td>{contact.date_updated}</td>
-              <td>
-                <button onClick={() => handleUpdate(contact.id)}>Update</button>
-                <button onClick={() => handleDelete(contact.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-          </tbody>
-        </table>
-      ): <p>Loading</p>}
-    </div>
+    <main className="container" style={{ marginTop: "2rem" }}>
+      <ContactModal
+        active={active}
+        onClose={closeModal}
+        token={token}
+        id={id}
+        getContacts={getContacts}
+      />
+
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+        <h1>📒 My Contacts</h1>
+        <button className="contrast" onClick={openModal}>
+          + New Contact
+        </button>
+      </header>
+
+      {status && (
+        <p
+          style={{
+            color: status.toLowerCase().includes("success") ? "green" : "crimson",
+            marginBottom: "1rem",
+          }}
+        >
+          {status}
+        </p>
+      )}
+
+      {loaded && contacts?.length ? (
+        <div style={{ overflowX: "auto" }}>
+          <table className="striped">
+            <thead>
+              <tr>
+                <th>First</th>
+                <th>Middle</th>
+                <th>Last</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Updated</th>
+                <th style={{ textAlign: "center" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contacts.map((contact) => (
+                <tr key={contact.id}>
+                  <td>{contact.first_name}</td>
+                  <td>{contact.middle_name}</td>
+                  <td>{contact.last_name}</td>
+                  <td>{contact.email}</td>
+                  <td>{contact.phone}</td>
+                  <td>{new Date(contact.date_updated).toLocaleString()}</td>
+                  <td style={{ textAlign: "center" }}>
+                    <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
+                      <button
+                        className="secondary"
+                        onClick={() => handleUpdate(contact.id)}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className="outline"
+                        style={{ color: "crimson" }}
+                        onClick={() => handleDelete(contact.id)}
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p style={{ marginTop: "1rem" }}>{loaded ? "No contacts found." : "Loading..."}</p>
+      )}
+    </main>
   )
 }

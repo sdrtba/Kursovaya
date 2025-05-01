@@ -34,36 +34,78 @@ export const ProfilePage = () => {
   }
 
   return (
-    <div className="container">
-      <h1>Update Password</h1>
-      <form onSubmit={handlePasswordUpdate}>
-        <p>{status}</p>
-        <input
-          type="password"
-          name="oldPassword"
-          placeholder="Old Password"
-          aria-label="Password"
-          autoComplete="current-password"
-          value={oldPassword}
-          onChange={(e) => setOldPassword(e.target.value)}
-          maxLength={255}
-          required
-        />
-        <input
-          type="password"
-          name="newPassword"
-          placeholder="New Password"
-          aria-label="Password"
-          autoComplete="current-password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          maxLength={255}
-          required
-        />
-        <button type="submit" aria-busy={loading}>
-          Change Password
-        </button>
+    <main
+      className="container"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "80vh",
+      }}
+    >
+      <article
+        style={{
+          maxWidth: "400px",
+          width: "100%",
+          padding: "2rem",
+          borderRadius: "1rem",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+          backgroundColor: "#181e29",
+        }}
+      >
+        <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          🔐 Update Password
+        </h2>
+
+        <form onSubmit={handlePasswordUpdate}>
+          {status && (
+            <p
+              style={{
+                color: status.toLowerCase().includes("success") ? "green" : "crimson",
+                marginBottom: "1rem",
+                textAlign: "center",
+              }}
+            >
+              {status}
+            </p>
+          )}
+
+          <label>
+            Current Password
+            <input
+              type="password"
+              name="oldPassword"
+              placeholder="Enter current password"
+              autoComplete="current-password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          <label>
+            New Password
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="Enter new password"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            className="contrast"
+            style={{ width: "100%", marginTop: "1rem" }}
+            aria-busy={loading}
+          >
+            {loading ? "Updating..." : "Change Password"}
+          </button>
         </form>
-    </div>
+      </article>
+    </main>
   )
 }

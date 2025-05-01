@@ -1,9 +1,29 @@
-import {Link} from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
 export const HomePage = () => {
   return (
-    <div className="container">
-      <h1>Home Page</h1>
-    </div>
-  )
-}
+    <main className="container" style={{ paddingTop: "3rem" }}>
+      <section className="grid">
+        <div style={{ paddingTop: "10rem" }}>
+          <h1>Добро пожаловать в Контактник</h1>
+          <p>
+            Управляй своими контактами быстро, удобно и безопасно. Добавляй,
+            редактируй и удаляй людей, чтобы ничего не забыть.
+          </p>
+          <Link to="/notes">
+            <button className="primary">Перейти к контактам</button>
+          </Link>
+        </div>
+
+        <div>
+          <img
+            src="../../public/home.svg"
+            alt="Notebook illustration"
+            style={{ width: "100%", borderRadius: "1rem" }}
+          />
+        </div>
+      </section>
+    </main>
+  );
+};
