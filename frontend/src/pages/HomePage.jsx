@@ -18,7 +18,7 @@ export const HomePage = () => {
 
         <div>
           <img
-            src="../../public/home.svg"
+            src="home.svg"
             alt="Notebook illustration"
             style={{ width: "100%", borderRadius: "1rem" }}
           />

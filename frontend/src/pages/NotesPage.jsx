@@ -12,7 +12,10 @@ export const NotesPage = () => {
   const [id, setId] = useState(null)
 
   const openModal = () => setActive(true)
-  const closeModal = () => setActive(false)
+  const closeModal = () => {
+    setActive(false)
+    setId(null)
+  }
 
   const handleUpdate = async (id) => {
     setId(id)
