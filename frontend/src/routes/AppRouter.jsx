@@ -7,8 +7,8 @@ import { NoteDetailPage } from '../pages/NoteDetailPage'
 import { ProfilePage } from '../pages/ProfilePage'
 import { NotFound } from '../pages/NotFound'
 import { MainLayout } from '../layouts/MainLayout'
-import { ProtectedRoute } from '../components/ProtectedRoute'
-import { AuthRouter } from '../components/AuthRoute'
+import { ProtectedRoute } from './ProtectedRoute'
+import { AuthRouter } from './AuthRoute'
 
 export const AppRouter = () => {
   return (

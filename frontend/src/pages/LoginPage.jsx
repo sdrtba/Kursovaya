@@ -1,12 +1,11 @@
-import React, { useState } from "react"
-import { useAuth } from "../contexts/AuthContext"
-import { useNavigate } from "react-router-dom"
-import { api } from "../api/axiosApi"
-
+import React, { useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../api/axiosApi'
 
 export const LoginPage = () => {
-  const [login, setLogin] = useState("")
-  const [password, setPassword] = useState("")
+  const [login, setLogin] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [, setToken] = useAuth()
@@ -22,8 +21,8 @@ export const LoginPage = () => {
       formData.append('username', login)
       formData.append('password', password)
 
-      const response = await api.post("/token", formData, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      const response = await api.post('/token', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
 
       setToken(response.data.access_token)
@@ -36,38 +35,18 @@ export const LoginPage = () => {
   }
 
   return (
-    <main
-      className="container"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "80vh",
-      }}
-    >
-      <article
-        style={{
-          maxWidth: "400px",
-          width: "100%",
-          padding: "2rem",
-          borderRadius: "1rem",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "#181e29",
-        }}
-      >
-        <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>Sign in</h1>
+    <main className="container card">
+      <article>
+        <h1>Вход</h1>
 
         <form onSubmit={handleSubmit}>
-          {error && (
-            <p style={{ color: "crimson", marginBottom: "1rem" }}>{error}</p>
-          )}
+          {error && <p>{error}</p>}
 
           <label>
-            Login
             <input
               type="text"
               name="login"
-              placeholder="Enter your login"
+              placeholder="Логин"
               autoComplete="username"
               value={login}
               onChange={(e) => setLogin(e.target.value)}
@@ -77,11 +56,10 @@ export const LoginPage = () => {
           </label>
 
           <label>
-            Password
             <input
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Пароль"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -90,13 +68,8 @@ export const LoginPage = () => {
             />
           </label>
 
-          <button
-            type="submit"
-            className="contrast"
-            aria-busy={loading}
-            style={{ width: "100%", marginTop: "1rem" }}
-          >
-            {loading ? "Logging in..." : "Login"}
+          <button type="submit" className="contrast" aria-busy={loading}>
+            Войти
           </button>
         </form>
       </article>

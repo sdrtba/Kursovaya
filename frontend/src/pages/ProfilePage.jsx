@@ -1,13 +1,12 @@
-import {Link} from "react-router-dom"
-import {useAuth} from "../contexts/AuthContext.jsx";
-import {api} from "../api/axiosApi.js";
-import React, {useContext, useState} from "react";
+import { useAuth } from '../contexts/AuthContext.jsx'
+import { api } from '../api/axiosApi.js'
+import React, { useState } from 'react'
 
 export const ProfilePage = () => {
-  const [token, ] = useAuth()
-  const [oldPassword, setOldPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [status, setStatus] = useState("")
+  const [token] = useAuth()
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handlePasswordUpdate = async (e) => {
@@ -15,55 +14,38 @@ export const ProfilePage = () => {
     setLoading(true)
     setStatus(null)
     try {
-      await api.post("change-password", {
-        old_password: oldPassword,
-        new_password: newPassword,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+      await api.post(
+        'change-password',
+        {
+          old_password: oldPassword,
+          new_password: newPassword
         },
-      })
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token
+          }
+        }
+      )
 
-      setStatus("Password Updated")
+      setStatus('Пароль обновлен')
     } catch (err) {
-      setStatus("Error")
+      setStatus('Ошибка')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main
-      className="container"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "80vh",
-      }}
-    >
-      <article
-        style={{
-          maxWidth: "400px",
-          width: "100%",
-          padding: "2rem",
-          borderRadius: "1rem",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "#181e29",
-        }}
-      >
-        <h2 style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          🔐 Update Password
-        </h2>
+    <main className="container card">
+      <article style={{}}>
+        <h2>🔐 Обновить пароль</h2>
 
         <form onSubmit={handlePasswordUpdate}>
           {status && (
             <p
               style={{
-                color: status.toLowerCase().includes("success") ? "green" : "crimson",
-                marginBottom: "1rem",
-                textAlign: "center",
+                color: status && status.toLowerCase().includes('обновлен') ? 'green' : 'crimson'
               }}
             >
               {status}
@@ -71,11 +53,10 @@ export const ProfilePage = () => {
           )}
 
           <label>
-            Current Password
             <input
               type="password"
               name="oldPassword"
-              placeholder="Enter current password"
+              placeholder="Текущий пароль"
               autoComplete="current-password"
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
@@ -84,11 +65,10 @@ export const ProfilePage = () => {
           </label>
 
           <label>
-            New Password
             <input
               type="password"
               name="newPassword"
-              placeholder="Enter new password"
+              placeholder="Новый пароль"
               autoComplete="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -96,13 +76,8 @@ export const ProfilePage = () => {
             />
           </label>
 
-          <button
-            type="submit"
-            className="contrast"
-            style={{ width: "100%", marginTop: "1rem" }}
-            aria-busy={loading}
-          >
-            {loading ? "Updating..." : "Change Password"}
+          <button type="submit" className="contrast" aria-busy={loading}>
+            Обновить
           </button>
         </form>
       </article>
