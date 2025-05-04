@@ -133,5 +133,10 @@ async def delete_contact(
     return await delete_db_contact(contact_id=contact_id, user=user, db=db)
 
 
+@app.get("/api/health")
+async def get_health():
+    return {"status": "ok"}
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
