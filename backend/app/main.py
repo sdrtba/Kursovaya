@@ -67,14 +67,14 @@ async def create_user(user: UserCreateS, db: Session = Depends(get_db)):
 
 @app.post("/api/change-password")
 async def update_user(
-    pass_update_data: PasswordUpdateS,
+    pass_update: PasswordUpdateS,
     db: Session = Depends(get_db),
     user: UserS = Depends(get_current_user),
 ):
     return await update_user_password(
         user=user,
-        old_password=pass_update_data.old_password,
-        new_password=pass_update_data.new_password,
+        old_password=pass_update.old_password,
+        new_password=pass_update.new_password,
         db=db,
     )
 
