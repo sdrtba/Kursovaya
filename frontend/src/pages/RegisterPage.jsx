@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { api } from '../api/axiosApi'
 
 export const RegisterPage = () => {
-  const [login, setLogin] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmationPassword, setConfirmationPassword] = useState('')
   const [isPasswordError, setIsPasswordError] = useState(false)
@@ -18,11 +18,17 @@ export const RegisterPage = () => {
     setLoading(true)
     setError(null)
 
-    if (password === confirmationPassword && password.length >= 3) {
+    if (password !== confirmationPassword) {
+      setIsPasswordError(true)
+      setError('Пароль не совпадает')
+    } else if (password.length < 3) {
+      setIsPasswordError(true)
+      setError('Пароль должен быть больше 3 символов')
+    } else {
       await api
         .post(
           '/users',
-          { login, password },
+          { username, password },
           {
             headers: { 'Content-Type': 'application/json' }
           }
@@ -37,38 +43,8 @@ export const RegisterPage = () => {
             setError('Что-то пошло не так')
           }
         })
-        .finally(() => {
-          setLoading(false)
-        })
-    } else {
-      setError('Ensure that the passwords match and greater then 3')
-      setIsPasswordError(true)
-      setLoading(false)
     }
-
-    //try {
-    //  setIsPasswordError(false)
-    //  setLoading(true)
-    //  setError(null)
-    //
-    //  if (password === confirmationPassword && password.length >= 3) {
-    //    const response = await api.post(
-    //      '/users',
-    //      { login, password },
-    //      {
-    //        headers: { 'Content-Type': 'application/json' }
-    //      }
-    //    )
-    //    setToken(response.data.access_token)
-    //  } else {
-    //    setError('Ensure that the passwords match and greater then 3')
-    //    setIsPasswordError(true)
-    //  }
-    //} catch (err) {
-    //  setError(err.response?.data?.detail || 'Something went wrong')
-    //} finally {
-    //  setLoading(false)
-    //}
+    setLoading(false)
   }
 
   return (
@@ -82,11 +58,11 @@ export const RegisterPage = () => {
           <label>
             <input
               type="text"
-              name="login"
+              name="username"
               placeholder="Логин"
               autoComplete="username"
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               maxLength={255}
               required
             />
@@ -100,6 +76,7 @@ export const RegisterPage = () => {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={isPasswordError ? true : ''}
               maxLength={255}
               required
             />
@@ -108,11 +85,12 @@ export const RegisterPage = () => {
           <label>
             <input
               type="password"
-              name="password"
+              name="confirmationPassword"
               placeholder="Подтвердите пароль"
               autoComplete="current-password"
               value={confirmationPassword}
               onChange={(e) => setConfirmationPassword(e.target.value)}
+              aria-invalid={isPasswordError ? true : ''}
               maxLength={255}
               required
             />

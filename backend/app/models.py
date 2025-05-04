@@ -8,7 +8,7 @@ from database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    login = Column(String(255), unique=True, index=True)
+    username = Column(String(255), unique=True, index=True)
     hashed_password = Column(String)
 
     contacts = relationship("Contact", back_populates="owner")

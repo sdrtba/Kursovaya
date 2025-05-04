@@ -44,7 +44,7 @@ async def generate_token(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     db_user = await auth_user(
-        login=form_data.username, password=form_data.password, db=db
+        username=form_data.username, password=form_data.password, db=db
     )
 
     if not db_user:
@@ -55,7 +55,7 @@ async def generate_token(
 
 @app.post("/api/users")
 async def create_user(user: UserCreateS, db: Session = Depends(get_db)):
-    db_user = await get_db_user(login=user.login, db=db)
+    db_user = await get_db_user(username=user.username, db=db)
 
     if db_user:
         raise HTTPException(status_code=409, detail="User already exists")

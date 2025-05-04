@@ -27,13 +27,13 @@ def get_db():
         db.close()
 
 
-async def get_db_user(login: str, db: Session):
-    db_user = db.query(User).filter(User.login == login).first()
+async def get_db_user(username: str, db: Session):
+    db_user = db.query(User).filter(User.username == username).first()
     return db_user
 
 
 async def create_db_user(user: UserCreateS, db: Session):
-    db_user = User(login=user.login, hashed_password=bcrypt.hash(user.password))
+    db_user = User(username=user.username, hashed_password=bcrypt.hash(user.password))
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -63,7 +63,7 @@ async def get_current_user(
 async def update_user_password(
     user: UserS, old_password: str, new_password: str, db: Session
 ):
-    db_user = await get_db_user(login=user.login, db=db)
+    db_user = await get_db_user(username=user.username, db=db)
 
     if not db_user:
         raise HTTPException(status_code=404, detail="User Not Found")
@@ -78,8 +78,8 @@ async def update_user_password(
     return db_user
 
 
-async def auth_user(login: str, password: str, db: Session):
-    db_user = await get_db_user(login=login, db=db)
+async def auth_user(username: str, password: str, db: Session):
+    db_user = await get_db_user(username=username, db=db)
 
     if not db_user:
         return False
@@ -92,7 +92,7 @@ async def auth_user(login: str, password: str, db: Session):
 async def create_token(user: User):
     token_payload = {
         "user_id": user.id,
-        "user_name": user.login,
+        "user_name": user.username,
         "exp": datetime.datetime.now(datetime.UTC)
         + datetime.timedelta(minutes=settings.TOKEN_EXPIRATION_MINUTES),
     }

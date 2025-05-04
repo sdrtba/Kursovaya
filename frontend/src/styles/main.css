@@ -2,11 +2,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
+    padding-top: 10px; /* соответствует высоте навбара */
+    box-sizing: border-box;
 }
 
 article {
-    max-width: 400px;
+    max-width: 600px;
     width: 100%;
     padding: 2rem;
     border-radius: 1rem;
