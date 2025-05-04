@@ -80,6 +80,7 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
       getContacts()
     } catch (err) {
       setStatus('Что-то пошло не так')
+      console.error(err)
     }
   }
 
@@ -108,6 +109,7 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
       getContacts()
     } catch (err) {
       setStatus('Что-то пошло не так')
+      console.error(err)
     }
   }
 
@@ -143,6 +145,12 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
 
             <input
               type="text"
+              placeholder="Фамилия"
+              value={middleName}
+              onChange={(e) => setMiddleName(e.target.value)}
+            />
+            <input
+              type="text"
               placeholder="Имя"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -150,17 +158,9 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
             />
             <input
               type="text"
-              placeholder="Фамилия"
-              value={middleName}
-              onChange={(e) => setMiddleName(e.target.value)}
-              required
-            />
-            <input
-              type="text"
               placeholder="Отчество"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              required
             />
             <input
               type="email"
@@ -172,6 +172,7 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
               type="tel"
               placeholder="Телефон (опционально)"
               value={phone}
+              pattern="^\+?[0-9]{7,15}$"
               onChange={(e) => setPhone(e.target.value)}
             />
           </section>

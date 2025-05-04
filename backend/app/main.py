@@ -105,7 +105,7 @@ async def get_contact(
 @app.get("/api/contacts", response_model=list[ContactS])
 async def get_contacts(
     offset: int = 0,
-    limit: int = 10,
+    limit: int = 100,
     user: UserS = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

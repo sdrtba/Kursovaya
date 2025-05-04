@@ -34,6 +34,7 @@ export const NotesPage = () => {
       await getContacts()
     } catch (err) {
       setStatus('Не удалось удалить')
+      console.error(err)
     }
   }
 
@@ -54,7 +55,7 @@ export const NotesPage = () => {
   }
 
   useEffect(() => {
-    getContacts()
+    getContacts().then()
   }, [])
 
   return (
@@ -97,9 +98,9 @@ export const NotesPage = () => {
           <table className="striped">
             <thead>
               <tr>
+                <th>Фамилия</th>
                 <th>Имя</th>
                 <th>Отчество</th>
-                <th>Фамилия</th>
                 <th>Почта</th>
                 <th>Телефон</th>
                 <th>Дата обновления</th>
@@ -109,11 +110,21 @@ export const NotesPage = () => {
             <tbody>
               {contacts.map((contact) => (
                 <tr key={contact.id}>
-                  <td>{contact.first_name}</td>
-                  <td>{contact.middle_name}</td>
-                  <td>{contact.last_name}</td>
-                  <td>{contact.email}</td>
-                  <td>{contact.phone}</td>
+                  <td className="table-cell-truncate" title={contact.middle_name}>
+                    {contact.middle_name}
+                  </td>
+                  <td className="table-cell-truncate" title={contact.first_name}>
+                    {contact.first_name}
+                  </td>
+                  <td className="table-cell-truncate" title={contact.last_name}>
+                    {contact.last_name}
+                  </td>
+                  <td className="table-cell-truncate" title={contact.email}>
+                    {contact.email}
+                  </td>
+                  <td className="table-cell-truncate" title={contact.phone}>
+                    {contact.phone}
+                  </td>
                   <td>{new Date(contact.date_updated).toLocaleString()}</td>
                   <td style={{ textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>

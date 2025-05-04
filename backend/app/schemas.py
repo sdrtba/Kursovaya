@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 
 class UserBaseS(BaseModel):
@@ -26,11 +26,11 @@ class PasswordUpdateS(BaseModel):
 
 
 class ContactBaseS(BaseModel):
-    first_name: str
-    middle_name: str
-    last_name: str
-    email: str
-    phone: str
+    first_name: constr(max_length=255)
+    middle_name: constr(max_length=255)
+    last_name: constr(max_length=255)
+    email: constr(max_length=255)
+    phone: constr(max_length=255)
 
 
 class ContactCreateS(ContactBaseS):

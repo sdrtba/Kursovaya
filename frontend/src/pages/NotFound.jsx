@@ -4,10 +4,10 @@ import styles from '../styles/notFound.module.css'
 export const NotFound = () => {
   return (
     <div className={`container ${styles.notfound}`}>
-      <h1>Oops! Page Not Found</h1>
-      <p>It seems that the page you're looking for doesn't exist.</p>
+      <h1>Страница не найдена!</h1>
+      <p>Похоже на то, что такой страницы не существует.</p>
       <Link to="/">
-        <button className="btn">Go Home</button>
+        <button className="btn">На главную</button>
       </Link>
     </div>
   )

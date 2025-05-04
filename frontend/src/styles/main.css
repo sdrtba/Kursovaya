@@ -30,3 +30,10 @@ article form p {
     color: crimson;
     text-align: center;
 }
+
+.table-cell-truncate {
+  max-width: 150px;      /* ограничение ширины */
+  white-space: nowrap;   /* запрет на перенос строк */
+  overflow: hidden;      /* скрытие лишнего */
+  text-overflow: ellipsis; /* многоточие */
+}

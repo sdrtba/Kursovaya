@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect } from 'react'
 import { api } from '../api/axiosApi'
 
-const AuthContext = createContext()
+const AuthContext = createContext(null)
 
 export const useAuth = () => {
   return useContext(AuthContext)
@@ -24,10 +24,11 @@ export const AuthProvider = (props) => {
       } catch (err) {
         setToken(null)
         localStorage.removeItem('token')
+        console.error(err)
       }
     }
 
-    fetchUser()
+    fetchUser().then()
   }, [token])
 
   return <AuthContext.Provider value={[token, setToken]}>{props.children}</AuthContext.Provider>

@@ -31,6 +31,7 @@ export const ProfilePage = () => {
       setStatus('Пароль обновлен')
     } catch (err) {
       setStatus('Ошибка')
+      console.error(err)
     } finally {
       setLoading(false)
     }
