@@ -1,17 +1,16 @@
+import jwt
 import datetime
 
+from passlib.hash import bcrypt
+from passlib.exc import InvalidTokenError
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
-from jwt import ExpiredSignatureError
-from passlib.exc import InvalidTokenError
-
-from database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session
-from models import User, Contact
-from schemas import UserCreateS, UserS, ContactS, ContactCreateS
-from passlib.hash import bcrypt
+
 from config import settings
-import jwt
+from models import User, Contact
+from database import Base, SessionLocal, engine
+from schemas import UserCreateS, UserS, ContactCreateS
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
@@ -41,13 +40,17 @@ async def create_db_user(user: UserCreateS, db: Session):
     return db_user
 
 
-async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+async def get_current_user(
+    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+):
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
         db_user = db.get(User, payload["user_id"])
         if db_user is None:
             raise HTTPException(status_code=404, detail="User Not Found")
-    except ExpiredSignatureError:
+    except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token Expired")
     except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid Token")
@@ -57,7 +60,9 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
     return db_user
 
 
-async def update_user_password(user: UserS, old_password: str, new_password: str, db: Session):
+async def update_user_password(
+    user: UserS, old_password: str, new_password: str, db: Session
+):
     db_user = await get_db_user(login=user.login, db=db)
 
     if not db_user:
@@ -88,7 +93,8 @@ async def create_token(user: User):
     token_payload = {
         "user_id": user.id,
         "user_name": user.login,
-        "exp": datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=settings.TOKEN_EXPIRATION_MINUTES),
+        "exp": datetime.datetime.now(datetime.UTC)
+        + datetime.timedelta(minutes=settings.TOKEN_EXPIRATION_MINUTES),
     }
 
     token = jwt.encode(token_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
@@ -97,7 +103,12 @@ async def create_token(user: User):
 
 
 async def _contact_selector(contact_id: int, user: UserS, db: Session):
-    db_contact = db.query(Contact).filter_by(owner_id=user.id).filter(Contact.id == contact_id).first()
+    db_contact = (
+        db.query(Contact)
+        .filter_by(owner_id=user.id)
+        .filter(Contact.id == contact_id)
+        .first()
+    )
 
     if db_contact is None:
         raise HTTPException(status_code=404, detail="Contact Not Found")
@@ -111,7 +122,9 @@ async def get_db_contact(contact_id: int, user: UserS, db: Session):
 
 
 async def get_db_contacts(offset: int, limit: int, user: UserS, db: Session):
-    db_contacts = db.query(Contact).filter_by(owner_id=user.id).offset(offset).limit(limit).all()
+    db_contacts = (
+        db.query(Contact).filter_by(owner_id=user.id).offset(offset).limit(limit).all()
+    )
 
     if db_contacts is None:
         raise HTTPException(status_code=404, detail="Contacts Not Found")
@@ -127,7 +140,9 @@ async def create_db_contact(user: UserS, contact: ContactCreateS, db: Session):
     return db_contact
 
 
-async def update_db_contact(contact_id: int, user: UserS, contact: ContactCreateS, db: Session):
+async def update_db_contact(
+    contact_id: int, user: UserS, contact: ContactCreateS, db: Session
+):
     db_contact = await _contact_selector(contact_id=contact_id, user=user, db=db)
 
     db_contact.first_name = contact.first_name
