@@ -13,29 +13,62 @@ export const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    try {
-      setIsPasswordError(false)
-      setLoading(true)
-      setError(null)
 
-      if (password === confirmationPassword && password.length >= 3) {
-        const response = await api.post(
+    setIsPasswordError(false)
+    setLoading(true)
+    setError(null)
+
+    if (password === confirmationPassword && password.length >= 3) {
+      await api
+        .post(
           '/users',
           { login, password },
           {
             headers: { 'Content-Type': 'application/json' }
           }
         )
-        setToken(response.data.access_token)
-      } else {
-        setError('Ensure that the passwords match and greater then 3')
-        setIsPasswordError(true)
-      }
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Something went wrong')
-    } finally {
+        .then((response) => {
+          setToken(response.data.access_token)
+        })
+        .catch((err) => {
+          if (err.response.status === 409) {
+            setError('Пользователь уже существует')
+          } else {
+            setError('Что-то пошло не так')
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    } else {
+      setError('Ensure that the passwords match and greater then 3')
+      setIsPasswordError(true)
       setLoading(false)
     }
+
+    //try {
+    //  setIsPasswordError(false)
+    //  setLoading(true)
+    //  setError(null)
+    //
+    //  if (password === confirmationPassword && password.length >= 3) {
+    //    const response = await api.post(
+    //      '/users',
+    //      { login, password },
+    //      {
+    //        headers: { 'Content-Type': 'application/json' }
+    //      }
+    //    )
+    //    setToken(response.data.access_token)
+    //  } else {
+    //    setError('Ensure that the passwords match and greater then 3')
+    //    setIsPasswordError(true)
+    //  }
+    //} catch (err) {
+    //  setError(err.response?.data?.detail || 'Something went wrong')
+    //} finally {
+    //  setLoading(false)
+    //}
   }
 
   return (

@@ -58,7 +58,7 @@ async def create_user(user: UserCreateS, db: Session = Depends(get_db)):
     db_user = await get_db_user(login=user.login, db=db)
 
     if db_user:
-        raise HTTPException(status_code=400, detail="User already exists")
+        raise HTTPException(status_code=409, detail="User already exists")
 
     db_user = await create_db_user(user, db)
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/axiosApi'
 
 export const LoginPage = () => {
-  const [login, setLogin] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -13,25 +13,32 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    try {
-      setLoading(true)
-      setError(null)
 
-      const formData = new URLSearchParams()
-      formData.append('username', login)
-      formData.append('password', password)
+    setLoading(true)
+    setError(null)
 
-      const response = await api.post('/token', formData, {
+    const formData = new URLSearchParams()
+    formData.append('username', username)
+    formData.append('password', password)
+
+    await api
+      .post('/token', formData, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
-
-      setToken(response.data.access_token)
-      navigate('/')
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Something went wrong')
-    } finally {
-      setLoading(false)
-    }
+      .then((response) => {
+        setToken(response.data.access_token)
+        navigate('/')
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          setError('Неверный логин или пароль')
+        } else {
+          setError('Что-то пошла не так')
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -45,11 +52,11 @@ export const LoginPage = () => {
           <label>
             <input
               type="text"
-              name="login"
+              name="username"
               placeholder="Логин"
               autoComplete="username"
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               maxLength={255}
               required
             />

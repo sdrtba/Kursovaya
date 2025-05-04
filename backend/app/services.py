@@ -99,7 +99,7 @@ async def create_token(user: User):
 
     token = jwt.encode(token_payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    return dict(access_token=token, token_type="Bearer")
+    return dict(status_code=201, access_token=token, token_type="Bearer")
 
 
 async def _contact_selector(contact_id: int, user: UserS, db: Session):
