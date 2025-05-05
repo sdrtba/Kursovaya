@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export const HomePage = () => {
   return (
-    <main className="container" style={{ paddingTop: '2rem' }}>
+    <main className="container" style={{ paddingTop: '2rem', display: 'grid' }}>
       <section className="grid">
         <div style={{ paddingTop: '10rem' }}>
           <h1>Добро пожаловать в Контактник</h1>
@@ -17,7 +17,11 @@ export const HomePage = () => {
         </div>
 
         <div>
-          <img src="home.svg" alt="Notebook illustration" />
+          <img
+            src="home.svg"
+            alt="Notebook illustration"
+            style={{ width: '70vh', height: '70vh' }}
+          />
         </div>
       </section>
     </main>
