@@ -31,7 +31,7 @@ services:
     networks:
       - dev
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "fastapi_db"]
+      test: ["CMD", "pg_isready", "-U", "fastapi_user"]
       interval: 10s
       retries: 5
 
