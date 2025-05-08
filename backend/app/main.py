@@ -3,7 +3,15 @@ from sqlalchemy.orm import Session
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.cors import CORSMiddleware
-from schemas import UserCreateS, UserS, ContactS, ContactCreateS, PasswordUpdateS
+from schemas import (
+    UserCreateS,
+    UserS,
+    ContactS,
+    ContactCreateS,
+    PasswordUpdateS,
+    GroupS,
+    GroupCreateS,
+)
 from services import (
     create_database,
     get_db,
@@ -18,6 +26,8 @@ from services import (
     delete_db_contact,
     auth_user,
     update_user_password,
+    get_db_groups,
+    create_db_group,
 )
 
 app = FastAPI()
@@ -27,9 +37,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://213.108.23.238",
-	"https://213.108.23.238",
-	"http://sdrtba.ru",
-	"https://sdrtba.ru",
+        "https://213.108.23.238",
+        "http://sdrtba.ru",
+        "https://sdrtba.ru",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -134,6 +144,22 @@ async def delete_contact(
     db: Session = Depends(get_db),
 ):
     return await delete_db_contact(contact_id=contact_id, user=user, db=db)
+
+
+@app.get("/api/groups", response_model=list[GroupS])
+async def get_groups(
+    user: UserS = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    return await get_db_groups(user=user, db=db)
+
+
+@app.post("/api/groups", response_model=GroupS)
+async def create_group(
+    group: GroupCreateS,
+    user: UserS = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return await create_db_group(group=group, user=user, db=db)
 
 
 @app.get("/api/health")

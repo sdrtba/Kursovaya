@@ -8,9 +8,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from config import settings
-from models import User, Contact
+from models import User, Contact, Group
 from database import Base, SessionLocal, engine
-from schemas import UserCreateS, UserS, ContactCreateS
+from schemas import UserCreateS, UserS, ContactCreateS, GroupCreateS
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
@@ -105,7 +105,7 @@ async def create_token(user: User):
 async def _contact_selector(contact_id: int, user: UserS, db: Session):
     db_contact = (
         db.query(Contact)
-        .filter_by(owner_id=user.id)
+        .filter_by(user_id=user.id)
         .filter(Contact.id == contact_id)
         .first()
     )
@@ -123,7 +123,7 @@ async def get_db_contact(contact_id: int, user: UserS, db: Session):
 
 async def get_db_contacts(offset: int, limit: int, user: UserS, db: Session):
     db_contacts = (
-        db.query(Contact).filter_by(owner_id=user.id).offset(offset).limit(limit).all()
+        db.query(Contact).filter_by(user_id=user.id).offset(offset).limit(limit).all()
     )
 
     if db_contacts is None:
@@ -133,7 +133,7 @@ async def get_db_contacts(offset: int, limit: int, user: UserS, db: Session):
 
 
 async def create_db_contact(user: UserS, contact: ContactCreateS, db: Session):
-    db_contact = Contact(**contact.model_dump(), owner_id=user.id)
+    db_contact = Contact(**contact.model_dump(), user_id=user.id)
     db.add(db_contact)
     db.commit()
     db.refresh(db_contact)
@@ -163,3 +163,30 @@ async def delete_db_contact(contact_id: int, user: UserS, db: Session):
     db.commit()
 
     return dict(status_code=201, details="Contact Deleted")
+
+
+async def get_db_groups(user: UserS, db: Session):
+    db_groups = db.query(Group).filter_by(user_id=user.id).all()
+
+    if db_groups is None:
+        raise HTTPException(status_code=404, detail="Groups Not Found")
+
+    return db_groups
+
+
+async def create_db_group(group: GroupCreateS, user: UserS, db: Session):
+    db_group = (
+        db.query(Group)
+        .filter_by(user_id=user.id)
+        .filter(Group.name == group.name)
+        .first()
+    )
+
+    if db_group is not None:
+        raise HTTPException(status_code=429, detail="Group Already Exists")
+
+    db_group = Group(name=group.name, user_id=user.id)
+    db.add(db_group)
+    db.commit()
+    db.refresh(db_group)
+    return db_group

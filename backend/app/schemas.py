@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import Optional
+
 from pydantic import BaseModel, constr
 
 
@@ -31,6 +33,7 @@ class ContactBaseS(BaseModel):
     last_name: constr(max_length=255)
     email: constr(max_length=255)
     phone: constr(max_length=255)
+    group_id: Optional[int] = None
 
 
 class ContactCreateS(ContactBaseS):
@@ -39,9 +42,26 @@ class ContactCreateS(ContactBaseS):
 
 class ContactS(ContactBaseS):
     id: int
-    owner_id: int
+    user_id: int
     date_created: datetime
     date_updated: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class GroupBaseS(BaseModel):
+    name: str
+
+
+class GroupCreateS(GroupBaseS):
+    pass
+
+
+class GroupS(GroupBaseS):
+    id: int
+    user_id: int
+    name: str
 
     class Config:
         from_attributes = True
