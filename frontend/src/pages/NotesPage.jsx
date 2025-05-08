@@ -1,19 +1,28 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '../hooks/UseAuth'
-import { api } from '../api/axiosApi.js'
+import { useState } from 'react'
 import { ContactModal } from '../components/ContactModal'
+import { useContacts } from '../hooks/useContacts'
+import { ContactsTable } from '../components/ContactsTable.jsx'
+import { useAuth } from '../hooks/useAuth.jsx'
 
 export const NotesPage = () => {
-  const [token] = useAuth()
-  const [status, setStatus] = useState('')
-  const [loaded, setLoaded] = useState(false)
-  const [contacts, setContacts] = useState([])
+  const { contacts, status, loaded, getContacts, handleDelete } = useContacts()
   const [active, setActive] = useState(false)
   const [id, setId] = useState(null)
-
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('date_updated') // или 'first_name', 'last_name' и т.д.
   const [sortOrder, setSortOrder] = useState('desc') // 'asc' или 'desc'
+  const [token] = useAuth()
+
+  const openModal = () => setActive(true)
+  const closeModal = () => {
+    setActive(false)
+    setId(null)
+  }
+
+  const handleUpdate = async (id) => {
+    setId(id)
+    openModal()
+  }
 
   const filteredAndSortedContacts = [...contacts]
     .filter((contact) => {
@@ -36,53 +45,6 @@ export const NotesPage = () => {
         return fieldA < fieldB ? 1 : -1
       }
     })
-
-  const openModal = () => setActive(true)
-  const closeModal = () => {
-    setActive(false)
-    setId(null)
-  }
-
-  const handleUpdate = async (id) => {
-    setId(id)
-    openModal()
-  }
-
-  const handleDelete = async (id) => {
-    try {
-      await api.delete(`/contacts/${id}/?contact_id=${id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-        }
-      })
-
-      await getContacts()
-    } catch (err) {
-      setStatus('Не удалось удалить')
-      console.error(err)
-    }
-  }
-
-  const getContacts = async () => {
-    try {
-      const response = await api.get('/contacts', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-        }
-      })
-
-      setContacts(response.data)
-      setLoaded(true)
-    } catch (err) {
-      setStatus(err.response?.data?.detail || 'Что-то пошло не так')
-    }
-  }
-
-  useEffect(() => {
-    getContacts().then()
-  }, [])
 
   return (
     <main className="container" style={{ marginTop: '2rem' }}>
@@ -145,60 +107,16 @@ export const NotesPage = () => {
       </div>
 
       {loaded && contacts?.length ? (
-        <div style={{ overflowX: 'auto' }}>
-          <table className="striped">
-            <thead>
-              <tr>
-                <th>Фамилия</th>
-                <th>Имя</th>
-                <th>Отчество</th>
-                <th>Почта</th>
-                <th>Телефон</th>
-                <th>Дата обновления</th>
-                <th style={{ textAlign: 'center' }}>Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAndSortedContacts.map((contact) => (
-                <tr key={contact.id}>
-                  <td className="table-cell-truncate" title={contact.middle_name}>
-                    {contact.middle_name}
-                  </td>
-                  <td className="table-cell-truncate" title={contact.first_name}>
-                    {contact.first_name}
-                  </td>
-                  <td className="table-cell-truncate" title={contact.last_name}>
-                    {contact.last_name}
-                  </td>
-                  <td className="table-cell-truncate" title={contact.email}>
-                    {contact.email}
-                  </td>
-                  <td className="table-cell-truncate" title={contact.phone}>
-                    {contact.phone}
-                  </td>
-                  <td>{new Date(contact.date_updated).toLocaleString()}</td>
-                  <td style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                      <button className="secondary" onClick={() => handleUpdate(contact.id)}>
-                        ✏️
-                      </button>
-                      <button
-                        className="outline"
-                        style={{ color: 'crimson' }}
-                        onClick={() => handleDelete(contact.id)}
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <div style={{ overflowX: 'auto' }}></div>
       ) : (
         <p style={{ marginTop: '1rem' }}>{loaded ? 'Не найдено.' : 'Загрузка...'}</p>
       )}
+
+      <ContactsTable
+        contacts={filteredAndSortedContacts}
+        onUpdate={handleUpdate}
+        onDelete={handleDelete}
+      />
     </main>
   )
 }

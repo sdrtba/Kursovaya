@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuth } from '../hooks/UseAuth'
+import { useAuth } from '../hooks/useAuth.jsx'
 import { api } from '../api/axiosApi'
 
 export const RegisterPage = () => {
