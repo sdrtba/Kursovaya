@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
-import { NotesPage } from '../pages/NotesPage'
+import { ContactsPage } from '../pages/ContactsPage.jsx'
 import { ProfilePage } from '../pages/ProfilePage'
 import { NotFound } from '../pages/NotFound'
 import { MainLayout } from '../layouts/MainLayout'
@@ -20,7 +20,7 @@ export const AppRouter = () => {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path={'/profile'} element={<ProfilePage />} />
-          <Route path={'/notes'} element={<NotesPage />} />
+          <Route path={'/notes'} element={<ContactsPage />} />
         </Route>
         <Route path={'*'} element={<NotFound />} />
       </Route>

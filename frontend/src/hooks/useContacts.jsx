@@ -1,31 +1,30 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api/axiosApi'
-import { useAuth } from './useAuth'
 
-export const useContacts = () => {
-  const [token] = useAuth()
+export const useContacts = (token) => {
   const [contacts, setContacts] = useState([])
   const [status, setStatus] = useState('')
-  const [loaded, setLoaded] = useState(false)
 
-  const getContacts = async () => {
-    await api
-      .get('/contacts', {
+  const getContacts = async (id = null) => {
+    const url = id ? `/contacts/${id}/?contact_id=${id}` : '/contacts'
+
+    try {
+      const response = await api.get(url, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token
         }
       })
-      .then((response) => {
-        setContacts(response.data)
-        setLoaded(true)
-      })
-      .catch((err) => {
-        setStatus(err.response?.data?.detail || 'Что-то пошло не так')
-      })
+      if (id) return response.data
+      setContacts(response.data)
+    } catch (err) {
+      setStatus('Ошибка во время получения контактов')
+      console.error(err)
+      return null
+    }
   }
 
-  const handleDelete = async (id) => {
+  const deleteContact = async (id) => {
     await api
       .delete(`/contacts/${id}/?contact_id=${id}`, {
         headers: {
@@ -33,10 +32,67 @@ export const useContacts = () => {
         }
       })
       .then(async () => {
-        await getContacts()
+        setStatus('Контакт удален')
+        await getContacts().then()
       })
       .catch((err) => {
-        setStatus('Не удалось удалить')
+        setStatus('Ошибка во время удаления')
+        console.error(err)
+      })
+  }
+
+  const updateContact = async (contact) => {
+    await api
+      .put(
+        `/contacts/${contact.id}/?contact_id=${contact.id}`,
+        {
+          first_name: contact.firstName,
+          middle_name: contact.middleName,
+          last_name: contact.lastName,
+          email: contact.email,
+          phone: contact.phone
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token
+          }
+        }
+      )
+      .then(async () => {
+        setStatus('Контакт обновлен')
+        await getContacts().then()
+      })
+      .catch((err) => {
+        setStatus('Ошибка во время обновления')
+        console.error(err)
+      })
+  }
+
+  const createContact = async (contact) => {
+    await api
+      .post(
+        '/contacts',
+        {
+          first_name: contact.firstName,
+          middle_name: contact.middleName,
+          last_name: contact.lastName,
+          email: contact.email,
+          phone: contact.phone
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token
+          }
+        }
+      )
+      .then(async () => {
+        setStatus('Контакт создан')
+        await getContacts().then()
+      })
+      .catch((err) => {
+        setStatus('Ошибка во время создания')
         console.error(err)
       })
   }
@@ -48,8 +104,9 @@ export const useContacts = () => {
   return {
     contacts,
     status,
-    loaded,
     getContacts,
-    handleDelete
+    deleteContact,
+    updateContact,
+    createContact
   }
 }

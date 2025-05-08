@@ -1,41 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { api } from '../api/axiosApi.js'
 import styles from '../styles/modal.module.css'
 
-export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
+export const ContactModal = ({
+  active,
+  onClose,
+  token,
+  id,
+  getContacts,
+  handleUpdate,
+  handleCreate
+}) => {
   const [firstName, setFirstName] = useState('')
   const [middleName, setMiddleName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [status, setStatus] = useState('')
   const modalRef = useRef(null)
-
-  useEffect(() => {
-    const getContact = async () => {
-      try {
-        const response = await api.get(`/contacts/${id}?contact_id=${id}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-          }
-        })
-
-        const data = response.data
-        setFirstName(data.first_name)
-        setMiddleName(data.middle_name)
-        setLastName(data.last_name)
-        setEmail(data.email)
-        setPhone(data.phone)
-      } catch (err) {
-        setStatus(err.response?.data?.detail || 'Что-то пошло не так')
-      }
-    }
-
-    if (id) {
-      getContact()
-    }
-  }, [id, token])
 
   useEffect(() => {
     if (active) {
@@ -46,71 +26,49 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
     }
   }, [active])
 
+  useEffect(() => {
+    const fetchContact = async () => {
+      const data = await getContacts(id)
+      console.log(data)
+      setFirstName(data.first_name)
+      setMiddleName(data.middle_name)
+      setLastName(data.last_name)
+      setEmail(data.email)
+      setPhone(data.phone)
+    }
+
+    if (id) {
+      fetchContact().then()
+    }
+  }, [id, token])
+
   const cleanFormData = () => {
     setFirstName('')
     setMiddleName('')
     setLastName('')
     setEmail('')
     setPhone('')
-    setStatus('')
   }
 
-  const handleCreateContact = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    try {
-      await api.post(
-        '/contacts',
-        {
-          first_name: firstName,
-          middle_name: middleName,
-          last_name: lastName,
-          email: email,
-          phone: phone
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-          }
-        }
-      )
 
-      cleanFormData()
-      setStatus('Контакт создан')
-      getContacts()
-    } catch (err) {
-      setStatus('Что-то пошло не так')
-      console.error(err)
+    const contact = {
+      firstName,
+      middleName,
+      lastName,
+      email,
+      phone,
+      id
     }
-  }
 
-  const handleUpdateContact = async (e) => {
-    e.preventDefault()
-    try {
-      await api.put(
-        `/contacts/${id}?contact_id=${id}`,
-        {
-          first_name: firstName,
-          middle_name: middleName,
-          last_name: lastName,
-          email: email,
-          phone: phone
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-          }
-        }
-      )
-
-      cleanFormData()
-      setStatus('Контакт обновлен')
-      getContacts()
-    } catch (err) {
-      setStatus('Что-то пошло не так')
-      console.error(err)
+    if (id) {
+      await handleUpdate(contact)
+    } else {
+      await handleCreate(contact)
     }
+
+    cleanFormData()
   }
 
   return (
@@ -126,23 +84,8 @@ export const ContactModal = ({ active, onClose, token, id, getContacts }) => {
           ></button>
         </header>
 
-        <form onSubmit={id ? handleUpdateContact : handleCreateContact}>
+        <form onSubmit={handleSubmit}>
           <section className={styles.modalForm}>
-            {status && (
-              <p
-                className={
-                  status.toLowerCase().includes('что-то')
-                    ? styles.statusError
-                    : styles.statusSuccess
-                }
-                style={{
-                  color: status && !status.toLowerCase().includes('что-то') ? 'green' : 'crimson'
-                }}
-              >
-                {status}
-              </p>
-            )}
-
             <input
               type="text"
               placeholder="Фамилия"
