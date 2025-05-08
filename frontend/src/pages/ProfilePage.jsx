@@ -1,4 +1,4 @@
-import { useAuth } from '../contexts/AuthContext.jsx'
+import { useAuth } from '../hooks/UseAuth'
 import { api } from '../api/axiosApi.js'
 import React, { useState } from 'react'
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useAuth } from '../contexts/AuthContext.jsx'
+import { useAuth } from '../hooks/UseAuth'
 import { api } from '../api/axiosApi.js'
 import { ContactModal } from '../components/ContactModal'
 

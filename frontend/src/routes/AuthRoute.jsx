@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/UseAuth'
 
 export const AuthRouter = () => {
   const [token] = useAuth()
