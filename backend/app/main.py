@@ -28,6 +28,7 @@ from services import (
     update_user_password,
     get_db_groups,
     create_db_group,
+    delete_db_group,
 )
 
 app = FastAPI()
@@ -160,6 +161,15 @@ async def create_group(
     db: Session = Depends(get_db),
 ):
     return await create_db_group(group=group, user=user, db=db)
+
+
+@app.delete("/api/groups/{id}")
+async def delete_group(
+    group_id: int,
+    user: UserS = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return await delete_db_group(group_id=group_id, user=user, db=db)
 
 
 @app.get("/api/health")

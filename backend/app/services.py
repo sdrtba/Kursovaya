@@ -150,6 +150,7 @@ async def update_db_contact(
     db_contact.last_name = contact.last_name
     db_contact.email = contact.email
     db_contact.phone = contact.phone
+    db_contact.group_id = contact.group_id
 
     db.commit()
     db.refresh(db_contact)
@@ -190,3 +191,17 @@ async def create_db_group(group: GroupCreateS, user: UserS, db: Session):
     db.commit()
     db.refresh(db_group)
     return db_group
+
+
+async def delete_db_group(group_id: int, user: UserS, db: Session):
+    db_group = (
+        db.query(Group).filter_by(user_id=user.id).filter(Group.id == group_id).first()
+    )
+
+    if db_group is None:
+        raise HTTPException(status_code=404, detail="Group Not Found")
+
+    db.delete(db_group)
+    db.commit()
+
+    return dict(status_code=201, details="Group Deleted")

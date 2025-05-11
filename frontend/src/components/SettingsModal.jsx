@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import styles from '../styles/modal.module.css'
 
-export const SettingsModal = ({ isOpen, onClose, categories, setCategories }) => {
+export const SettingsModal = ({ categories, setCategories, isOpen, onClose }) => {
   const modalRef = useRef(null)
 
   useEffect(() => {
