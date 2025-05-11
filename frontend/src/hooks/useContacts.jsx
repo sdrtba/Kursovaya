@@ -1,27 +1,25 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api/axiosApi'
+import { useAuth } from './useAuth'
 
-export const useContacts = (token) => {
+export const useContacts = () => {
+  const [token] = useAuth()
   const [contacts, setContacts] = useState([])
-  const [status, setStatus] = useState('')
 
-  const getContacts = async (id = null) => {
-    const url = id ? `/contacts/${id}/?contact_id=${id}` : '/contacts'
-
-    try {
-      const response = await api.get(url, {
+  const getContacts = async () => {
+    await api
+      .get('/contacts', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token
         }
       })
-      if (id) return response.data
-      setContacts(response.data)
-    } catch (err) {
-      setStatus('Ошибка во время получения контактов')
-      console.error(err)
-      return null
-    }
+      .then((response) => {
+        setContacts(response.data)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   }
 
   const deleteContact = async (id) => {
@@ -32,67 +30,57 @@ export const useContacts = (token) => {
         }
       })
       .then(async () => {
-        setStatus('Контакт удален')
         await getContacts().then()
       })
       .catch((err) => {
-        setStatus('Ошибка во время удаления')
         console.error(err)
       })
   }
 
   const updateContact = async (contact) => {
+    const data = {
+      first_name: contact.firstName,
+      middle_name: contact.middleName,
+      last_name: contact.lastName,
+      email: contact.email,
+      phone: contact.phone
+    }
+    if (contact.groupId) data.group_id = contact.groupId
     await api
-      .put(
-        `/contacts/${contact.id}/?contact_id=${contact.id}`,
-        {
-          first_name: contact.firstName,
-          middle_name: contact.middleName,
-          last_name: contact.lastName,
-          email: contact.email,
-          phone: contact.phone
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-          }
+      .put(`/contacts/${contact.id}/?contact_id=${contact.id}`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
         }
-      )
+      })
       .then(async () => {
-        setStatus('Контакт обновлен')
         await getContacts().then()
       })
       .catch((err) => {
-        setStatus('Ошибка во время обновления')
         console.error(err)
       })
   }
 
   const createContact = async (contact) => {
+    const data = {
+      first_name: contact.firstName,
+      middle_name: contact.middleName,
+      last_name: contact.lastName,
+      email: contact.email,
+      phone: contact.phone
+    }
+    if (contact.groupId) data.group_id = contact.groupId
     await api
-      .post(
-        '/contacts',
-        {
-          first_name: contact.firstName,
-          middle_name: contact.middleName,
-          last_name: contact.lastName,
-          email: contact.email,
-          phone: contact.phone
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token
-          }
+      .post('/contacts', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
         }
-      )
+      })
       .then(async () => {
-        setStatus('Контакт создан')
         await getContacts().then()
       })
       .catch((err) => {
-        setStatus('Ошибка во время создания')
         console.error(err)
       })
   }
@@ -103,8 +91,6 @@ export const useContacts = (token) => {
 
   return {
     contacts,
-    status,
-    getContacts,
     deleteContact,
     updateContact,
     createContact

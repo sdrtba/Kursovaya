@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 
-export const ContactsTable = ({ contacts, categories, onUpdate, onDelete }) => {
+export const ContactsTable = ({ categories, groups, contacts, onUpdate, onDelete }) => {
   const [sortBy, setSortBy] = useState('date_updated')
   const [sortOrder, setSortOrder] = useState('desc')
-  const [search, setSearch] = useState('')
 
   const sortedContacts = [...contacts].sort((a, b) => {
     const fieldA = a[sortBy]?.toString() || ''
@@ -18,16 +17,6 @@ export const ContactsTable = ({ contacts, categories, onUpdate, onDelete }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        <input
-          type="text"
-          placeholder="Поиск по имени или почте"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ flex: 1 }}
-        />
-      </div>
-
       <table className="striped">
         <thead>
           <tr>
@@ -48,7 +37,8 @@ export const ContactsTable = ({ contacts, categories, onUpdate, onDelete }) => {
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        padding: '10px'
                       }}
                     >
                       {key.label}
@@ -70,6 +60,11 @@ export const ContactsTable = ({ contacts, categories, onUpdate, onDelete }) => {
         <tbody>
           {sortedContacts.map((contact) => (
             <tr key={contact.id}>
+              {categories.group.visible && (
+                <td className="table-cell-truncate" title={contact.group_id}>
+                  {groups.find((g) => g.id === contact.group_id)?.name || '—'}
+                </td>
+              )}
               {categories.middle_name.visible && (
                 <td className="table-cell-truncate" title={contact.middle_name}>
                   {contact.middle_name}

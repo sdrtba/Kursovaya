@@ -1,57 +1,54 @@
 import { useState } from 'react'
-import { ContactModal } from '../components/ContactModal'
+import { useCategories } from '../hooks/useCategories'
 import { ContactsTable } from '../components/ContactsTable'
+import { ContactModal } from '../components/ContactModal'
+import { SettingsModal } from '../components/SettingsModal'
 import { useContacts } from '../hooks/useContacts'
-import { useAuth } from '../hooks/useAuth'
-import { SettingsModal } from '../components/SettingsModal.jsx'
+import { useGroups } from '../hooks/useGroups'
 
 export const ContactsPage = () => {
-  const [token] = useAuth()
-  const [id, setId] = useState(null)
+  const [contactId, setContactId] = useState(null)
   const [isContactModal, setIsContactModal] = useState(false)
   const [isSettingsModal, setIsSettingsModal] = useState(false)
-  const [categories, setCategories] = useState({
-    last_name: { label: 'Фамилия', visible: true },
-    first_name: { label: 'Имя', visible: false },
-    middle_name: { label: 'Отчество', visible: true },
-    email: { label: 'Почта', visible: false },
-    phone: { label: 'Телефон', visible: false },
-    date_updated: { label: 'Дата обновления', visible: true }
-  })
-  const { contacts, getContacts, deleteContact, updateContact, createContact } = useContacts(token)
 
-  const openSettingsModal = () => {
-    setIsSettingsModal(true)
-    setId(id)
-  }
-  const openContactModal = (id) => {
+  const { contacts, deleteContact, updateContact, createContact } = useContacts()
+  const { groups, deleteGroup, createGroup } = useGroups()
+  const { categories, setCategories } = useCategories()
+
+  const handleCreateContact = () => {
+    setContactId(null)
+    setIsSettingsModal(false)
     setIsContactModal(true)
-    setId(id)
   }
-  const closeModal = () => {
+  const handleUpdateContact = (id) => {
+    setContactId(id)
+    setIsSettingsModal(false)
+    setIsContactModal(true)
+  }
+  const handleCloseModals = () => {
+    setContactId(null)
     setIsContactModal(false)
     setIsSettingsModal(false)
-    setId(null)
   }
 
   return (
-    <main className="container" style={{ marginTop: '2rem' }}>
+    <main className="container" style={{ marginTop: '1rem' }}>
       <ContactModal
-        id={id}
-        token={token}
-        active={isContactModal}
-        onClose={closeModal}
-        getContacts={getContacts}
-        handleUpdate={updateContact}
-        handleCreate={createContact}
+        id={contactId}
+        groups={groups}
+        contacts={contacts}
+        isOpen={isContactModal}
+        onClose={handleCloseModals}
+        onUpdate={updateContact}
+        onCreate={createContact}
       />
 
-      <SettingsModal
-        categories={categories}
-        active={isSettingsModal}
-        onClose={closeModal}
-        setCategories={setCategories}
-      />
+      {/*<SettingsModal*/}
+      {/*  categories={categories}*/}
+      {/*  setCategories={setCategories}*/}
+      {/*  isOpen={isSettingsModal}*/}
+      {/*  onClose={handleCloseModals}*/}
+      {/*/>*/}
 
       <header
         style={{
@@ -63,24 +60,25 @@ export const ContactsPage = () => {
       >
         <h1>📒 Мои контакты</h1>
         <div>
-          <button
-            className="contrast"
-            onClick={() => openContactModal(null)}
-            style={{ margin: 10 }}
-          >
+          <button className="contrast" onClick={() => handleCreateContact()} style={{ margin: 10 }}>
             + Добавить контакт
           </button>
 
-          <button className="contrast" onClick={() => openSettingsModal()} style={{ margin: 10 }}>
+          <button
+            className="contrast"
+            onClick={() => setIsSettingsModal(true)}
+            style={{ margin: 10 }}
+          >
             ⚙️
           </button>
         </div>
       </header>
 
       <ContactsTable
-        contacts={contacts}
         categories={categories}
-        onUpdate={openContactModal}
+        contacts={contacts}
+        groups={groups}
+        onUpdate={handleUpdateContact}
         onDelete={deleteContact}
       />
     </main>

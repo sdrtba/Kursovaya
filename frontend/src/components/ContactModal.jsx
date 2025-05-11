@@ -1,40 +1,37 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styles from '../styles/modal.module.css'
+import { useAuth } from '../hooks/useAuth'
 
-export const ContactModal = ({
-  active,
-  onClose,
-  token,
-  id,
-  getContacts,
-  handleUpdate,
-  handleCreate
-}) => {
+export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, onUpdate }) => {
+  const [token] = useAuth()
   const [firstName, setFirstName] = useState('')
   const [middleName, setMiddleName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [groupId, setGroupId] = useState('')
   const modalRef = useRef(null)
 
   useEffect(() => {
-    if (active) {
+    if (isOpen) {
       modalRef.current?.showModal()
     } else {
       modalRef.current?.close()
       cleanFormData()
     }
-  }, [active])
+  }, [isOpen])
 
   useEffect(() => {
     const fetchContact = async () => {
-      const data = await getContacts(id)
-      console.log(data)
-      setFirstName(data.first_name)
-      setMiddleName(data.middle_name)
-      setLastName(data.last_name)
-      setEmail(data.email)
-      setPhone(data.phone)
+      const contact = contacts.find((contact) => contact.id === id)
+      if (contact) {
+        setFirstName(contact.first_name)
+        setMiddleName(contact.middle_name)
+        setLastName(contact.last_name)
+        setEmail(contact.email)
+        setPhone(contact.phone)
+        setGroupId(contact.group_id) // это поле инициализирует select
+      }
     }
 
     if (id) {
@@ -48,6 +45,7 @@ export const ContactModal = ({
     setLastName('')
     setEmail('')
     setPhone('')
+    setGroupId('')
   }
 
   const handleSubmit = async (e) => {
@@ -59,13 +57,14 @@ export const ContactModal = ({
       lastName,
       email,
       phone,
+      groupId,
       id
     }
 
     if (id) {
-      await handleUpdate(contact)
+      await onUpdate(contact)
     } else {
-      await handleCreate(contact)
+      await onCreate(contact)
     }
 
     cleanFormData()
@@ -80,7 +79,7 @@ export const ContactModal = ({
             aria-label="Close"
             onClick={onClose}
             className="close"
-            style={{ marginLeft: 'auto' }}
+            style={{ alignItems: 'center' }}
           ></button>
         </header>
 
@@ -118,6 +117,14 @@ export const ContactModal = ({
               pattern="^\+?[0-9]{7,15}$"
               onChange={(e) => setPhone(e.target.value)}
             />
+            <select name="select" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
+              <option value="">Группа…</option>
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
           </section>
 
           <footer
@@ -130,10 +137,10 @@ export const ContactModal = ({
             }}
           >
             <button type="button" onClick={onClose} className="secondary">
-              Cancel
+              Отмена
             </button>
             <button type="submit" className={id ? 'contrast' : 'primary'}>
-              {id ? 'Update' : 'Create'}
+              {id ? 'Обновить' : 'Создать'}
             </button>
           </footer>
         </form>

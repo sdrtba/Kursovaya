@@ -1,16 +1,16 @@
 import React, { useEffect, useRef } from 'react'
 import styles from '../styles/modal.module.css'
 
-export const SettingsModal = ({ active, onClose, categories, setCategories }) => {
+export const SettingsModal = ({ isOpen, onClose, categories, setCategories }) => {
   const modalRef = useRef(null)
 
   useEffect(() => {
-    if (active) {
+    if (isOpen) {
       modalRef.current?.showModal()
     } else {
       modalRef.current?.close()
     }
-  }, [active])
+  }, [isOpen])
 
   return (
     <dialog ref={modalRef} onClose={onClose} open>
