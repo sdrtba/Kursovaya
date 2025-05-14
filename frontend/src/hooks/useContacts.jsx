@@ -45,7 +45,7 @@ export const useContacts = () => {
       email: contact.email,
       phone: contact.phone
     }
-    if (contact.groupId) data.group_id = contact.groupId
+    if (contact.groupName) data.group_name = contact.groupName
     await api
       .put(`/contacts/${contact.id}/?contact_id=${contact.id}`, data, {
         headers: {
@@ -69,7 +69,7 @@ export const useContacts = () => {
       email: contact.email,
       phone: contact.phone
     }
-    if (contact.groupId) data.group_id = contact.groupId
+    if (contact.groupName) data.group_name = contact.groupName
     await api
       .post('/contacts', data, {
         headers: {
@@ -91,6 +91,7 @@ export const useContacts = () => {
 
   return {
     contacts,
+    getContacts,
     deleteContact,
     updateContact,
     createContact

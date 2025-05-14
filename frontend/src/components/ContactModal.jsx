@@ -9,7 +9,7 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [groupId, setGroupId] = useState('')
+  const [groupName, setGroupName] = useState('')
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
         setLastName(contact.last_name)
         setEmail(contact.email)
         setPhone(contact.phone)
-        setGroupId(contact.group_id) // это поле инициализирует select
+        setGroupName(contact.group_name) // это поле инициализирует select
       }
     }
 
@@ -45,7 +45,7 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
     setLastName('')
     setEmail('')
     setPhone('')
-    setGroupId('')
+    setGroupName('')
   }
 
   const handleSubmit = async (e) => {
@@ -57,7 +57,7 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
       lastName,
       email,
       phone,
-      groupId,
+      groupName,
       id
     }
 
@@ -117,10 +117,10 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
               pattern="^\+?[0-9]{7,15}$"
               onChange={(e) => setPhone(e.target.value)}
             />
-            <select name="select" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
+            <select name="select" value={groupName} onChange={(e) => setGroupName(e.target.value)}>
               <option value="">Группа…</option>
               {groups.map((group) => (
-                <option key={group.id} value={group.id}>
+                <option key={group.id} value={group.name}>
                   {group.name}
                 </option>
               ))}

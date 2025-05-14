@@ -33,7 +33,7 @@ class ContactBaseS(BaseModel):
     last_name: constr(max_length=255)
     email: constr(max_length=255)
     phone: constr(max_length=255)
-    group_id: Optional[int] = None
+    group_name: Optional[constr(max_length=255)] = None
 
 
 class ContactCreateS(ContactBaseS):
@@ -61,7 +61,6 @@ class GroupCreateS(GroupBaseS):
 class GroupS(GroupBaseS):
     id: int
     user_id: int
-    name: str
 
     class Config:
         from_attributes = True

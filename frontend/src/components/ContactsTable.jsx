@@ -1,22 +1,74 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 export const ContactsTable = ({ categories, groups, contacts, onUpdate, onDelete }) => {
+  const [filterBy, setFilterBy] = useState('first_name')
+  const [query, setQuery] = useState('')
   const [sortBy, setSortBy] = useState('date_updated')
   const [sortOrder, setSortOrder] = useState('desc')
 
-  const sortedContacts = [...contacts].sort((a, b) => {
-    const fieldA = a[sortBy]?.toString() || ''
-    const fieldB = b[sortBy]?.toString() || ''
+  const filteredContacts = useMemo(() => {
+    if (!query.trim()) return contacts
 
-    if (sortOrder === 'asc') {
-      return fieldA.localeCompare(fieldB, 'ru') // 'ru' — для кириллицы
-    } else {
-      return fieldB.localeCompare(fieldA, 'ru')
-    }
-  })
+    const q = query.toLowerCase()
+    return contacts.filter((contact) => {
+      const value = contact[filterBy]
+      return value != null && String(value).toLowerCase().includes(q)
+    })
+  }, [contacts, filterBy, query])
+
+  const sortedContacts = useMemo(() => {
+    return [...filteredContacts].sort((a, b) => {
+      const va = a[sortBy] ?? ''
+      const vb = b[sortBy] ?? ''
+      if (va < vb) return sortOrder === 'asc' ? -1 : 1
+      if (va > vb) return sortOrder === 'asc' ? 1 : -1
+      return 0
+    })
+  }, [filteredContacts, sortBy, sortOrder])
+
+  // const sortedContacts = [...contacts].sort((a, b) => {
+  //   const fieldA = a[sortBy]?.toString() || ''
+  //   const fieldB = b[sortBy]?.toString() || ''
+  //
+  //   if (sortOrder === 'asc') {
+  //     return fieldA.localeCompare(fieldB, 'ru') // 'ru' — для кириллицы
+  //   } else {
+  //     return fieldB.localeCompare(fieldA, 'ru')
+  //   }
+  // })
 
   return (
     <div>
+      <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+        <label>
+          Поле:
+          <select
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
+            style={{ marginLeft: 4 }}
+          >
+            {Object.entries(categories)
+              .filter(([, cfg]) => cfg.visible)
+              .map(([name, cfg]) => (
+                <option key={name} value={name}>
+                  {cfg.label}
+                </option>
+              ))}
+          </select>
+        </label>
+
+        <label>
+          Поиск:
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Введите текст..."
+            style={{ marginLeft: 4, padding: '4px 8px' }}
+          />
+        </label>
+      </div>
+
       <table className="striped">
         <thead>
           <tr>
@@ -60,9 +112,9 @@ export const ContactsTable = ({ categories, groups, contacts, onUpdate, onDelete
         <tbody>
           {sortedContacts.map((contact) => (
             <tr key={contact.id}>
-              {categories.group.visible && (
-                <td className="table-cell-truncate" title={contact.group_id}>
-                  {groups.find((g) => g.id === contact.group_id)?.name || '—'}
+              {categories.group_name.visible && (
+                <td className="table-cell-truncate" title={contact.group_name}>
+                  {contact.group_name}
                 </td>
               )}
               {categories.middle_name.visible && (

@@ -37,6 +37,7 @@ class Contact(Base):
     last_name = Column(String(255), index=True)
     email = Column(String(255), index=True)
     phone = Column(String(255), index=True)
+    group_name = Column(String(255), index=True)
     date_created = Column(DateTime, default=datetime.now)
     date_updated = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 

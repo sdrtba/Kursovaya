@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 export const useCategories = () => {
   const [categories, setCategories] = useState({
-    group: { label: 'Группа', visible: true },
+    group_name: { label: 'Группа', visible: true },
     last_name: { label: 'Фамилия', visible: true },
     first_name: { label: 'Имя', visible: true },
     middle_name: { label: 'Отчество', visible: true },

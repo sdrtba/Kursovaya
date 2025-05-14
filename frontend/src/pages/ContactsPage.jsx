@@ -13,7 +13,7 @@ export const ContactsPage = () => {
   const [isSettingsModal, setIsSettingsModal] = useState(false)
   const [isGroupModal, setIsGroupModal] = useState(false)
 
-  const { contacts, deleteContact, updateContact, createContact } = useContacts()
+  const { contacts, getContacts, deleteContact, updateContact, createContact } = useContacts()
   const { groups, deleteGroup, createGroup } = useGroups()
   const { categories, setCategories } = useCategories()
 
@@ -56,6 +56,7 @@ export const ContactsPage = () => {
       <GroupsModal
         groups={groups}
         isOpen={isGroupModal}
+        getContacts={getContacts}
         onClose={handleCloseModals}
         onCreate={createGroup}
         onDelete={deleteGroup}

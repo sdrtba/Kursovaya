@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styles from '../styles/modal.module.css'
 
-export const GroupsModal = ({ groups, isOpen, onClose, onCreate, onDelete }) => {
+export const GroupsModal = ({ groups, isOpen, getContacts, onClose, onCreate, onDelete }) => {
   const [name, setName] = useState('')
   const modalRef = useRef(null)
 
@@ -38,7 +38,14 @@ export const GroupsModal = ({ groups, isOpen, onClose, onCreate, onDelete }) => 
                 {group.name}
               </td>
               <td>
-                <button onClick={() => onDelete(group.id)}>🗑️</button>
+                <button
+                  onClick={async () => {
+                    await onDelete(group.id)
+                    await getContacts()
+                  }}
+                >
+                  🗑️
+                </button>
               </td>
             </tr>
           ))}
