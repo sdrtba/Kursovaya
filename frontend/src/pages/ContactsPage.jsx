@@ -14,7 +14,7 @@ export const ContactsPage = () => {
   const [isGroupModal, setIsGroupModal] = useState(false)
 
   const { contacts, getContacts, deleteContact, updateContact, createContact } = useContacts()
-  const { groups, deleteGroup, createGroup } = useGroups()
+  const { groups, deleteGroup, updateGroup, createGroup } = useGroups()
   const { categories, setCategories } = useCategories()
 
   const handleCreateContact = () => {
@@ -59,6 +59,7 @@ export const ContactsPage = () => {
         getContacts={getContacts}
         onClose={handleCloseModals}
         onCreate={createGroup}
+        onUpdate={updateGroup}
         onDelete={deleteGroup}
       />
 
@@ -80,13 +81,13 @@ export const ContactsPage = () => {
             Группы
           </button>
 
-          <button
-            className="contrast"
-            onClick={() => setIsSettingsModal(true)}
-            style={{ margin: 10 }}
-          >
-            ⚙️
-          </button>
+          {/*<button*/}
+          {/*  className="contrast"*/}
+          {/*  onClick={() => setIsSettingsModal(true)}*/}
+          {/*  style={{ margin: 10 }}*/}
+          {/*>*/}
+          {/*  ⚙️*/}
+          {/*</button>*/}
         </div>
       </header>
 

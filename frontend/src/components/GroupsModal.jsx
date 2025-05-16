@@ -1,8 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styles from '../styles/modal.module.css'
 
-export const GroupsModal = ({ groups, isOpen, getContacts, onClose, onCreate, onDelete }) => {
+export const GroupsModal = ({
+  groups,
+  isOpen,
+  getContacts,
+  onClose,
+  onCreate,
+  onUpdate,
+  onDelete
+}) => {
   const [name, setName] = useState('')
+  const [editingGroupId, setEditingGroupId] = useState(null)
+  const [editingName, setEditingName] = useState('')
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -15,8 +25,15 @@ export const GroupsModal = ({ groups, isOpen, getContacts, onClose, onCreate, on
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    onCreate(name)
+    await onCreate(name)
     setName('')
+  }
+
+  const handleSave = async (groupId) => {
+    await onUpdate({ id: groupId, name: editingName })
+    setEditingGroupId(null)
+    setEditingName('')
+    await getContacts()
   }
 
   return (
@@ -34,10 +51,34 @@ export const GroupsModal = ({ groups, isOpen, getContacts, onClose, onCreate, on
         <table>
           {groups.map((group) => (
             <tr key={group.id}>
-              <td className="table-cell-truncate" title={group.name}>
-                {group.name}
+              <td className="table-cell-truncate">
+                {editingGroupId === group.id ? (
+                  <input
+                    type="text"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    required
+                  />
+                ) : (
+                  <span title={group.name}>{group.name}</span>
+                )}
               </td>
               <td>
+                {editingGroupId === group.id ? (
+                  <>
+                    <button onClick={() => handleSave(group.id)}>✅</button>
+                    <button onClick={() => setEditingGroupId(null)}>❌</button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setEditingGroupId(group.id)
+                      setEditingName(group.name)
+                    }}
+                  >
+                    ✏️
+                  </button>
+                )}
                 <button
                   onClick={async () => {
                     await onDelete(group.id)

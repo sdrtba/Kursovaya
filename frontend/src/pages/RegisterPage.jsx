@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { api } from '../api/axiosApi'
+import { useNavigate } from 'react-router-dom'
 
 export const RegisterPage = () => {
   const [username, setUsername] = useState('')

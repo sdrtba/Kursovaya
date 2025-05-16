@@ -66,8 +66,8 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
     } else {
       await onCreate(contact)
     }
-
     cleanFormData()
+    onClose()
   }
 
   return (
@@ -136,9 +136,9 @@ export const ContactModal = ({ id, groups, contacts, isOpen, onClose, onCreate, 
               marginTop: '1.5rem'
             }}
           >
-            <button type="button" onClick={onClose} className="secondary">
-              Отмена
-            </button>
+            {/*<button type="button" onClick={onClose} className="secondary">*/}
+            {/*  Отмена*/}
+            {/*</button>*/}
             <button type="submit" className={id ? 'contrast' : 'primary'}>
               {id ? 'Обновить' : 'Создать'}
             </button>

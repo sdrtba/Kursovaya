@@ -37,6 +37,25 @@ export const useGroups = () => {
       })
   }
 
+  const updateGroup = async (group) => {
+    const data = {
+      name: group.name
+    }
+    await api
+      .put(`/groups/${group.id}/?group_id=${group.id}`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        }
+      })
+      .then(async () => {
+        await getGroups().then()
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  }
+
   const createGroup = async (name) => {
     await api
       .post(
@@ -66,6 +85,7 @@ export const useGroups = () => {
   return {
     groups,
     deleteGroup,
+    updateGroup,
     createGroup
   }
 }

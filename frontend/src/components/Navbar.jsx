@@ -32,11 +32,11 @@ export const Navbar = () => {
                   Контакты
                 </Link>
               </li>
-              <li>
-                <Link to="/profile" className="secondary">
-                  Профиль
-                </Link>
-              </li>
+              {/*<li>*/}
+              {/*  <Link to="/profile" className="secondary">*/}
+              {/*    Профиль*/}
+              {/*  </Link>*/}
+              {/*</li>*/}
               <li>
                 <button className="contrast" onClick={handleLogout}>
                   Выйти

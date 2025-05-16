@@ -33,7 +33,7 @@ export const LoginPage = () => {
         if (err.response.status === 401) {
           setError('Неверный логин или пароль')
         } else {
-          setError('Что-то пошла не так')
+          setError('Что-то пошло не так')
         }
       })
       .finally(() => {

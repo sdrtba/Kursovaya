@@ -193,6 +193,25 @@ async def create_db_group(group: GroupCreateS, user: UserS, db: Session):
     return db_group
 
 
+async def update_db_group(group_id: int, user: UserS, group: GroupCreateS, db: Session):
+    db_group = (
+        db.query(Group).filter_by(user_id=user.id).filter(Group.id == group_id).first()
+    )
+
+    if db_group is None:
+        raise HTTPException(status_code=404, detail="Group Not Found")
+
+    db.query(Contact).filter_by(user_id=user.id, group_name=db_group.name).update(
+        {Contact.group_name: group.name}, synchronize_session=False
+    )
+
+    db_group.name = group.name
+
+    db.commit()
+    db.refresh(db_group)
+    return db_group
+
+
 async def delete_db_group(group_id: int, user: UserS, db: Session):
     db_group = (
         db.query(Group).filter_by(user_id=user.id).filter(Group.id == group_id).first()

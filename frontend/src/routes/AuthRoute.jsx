@@ -5,7 +5,7 @@ export const AuthRouter = () => {
   const [token] = useAuth()
 
   if (token) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/notes" replace />
   }
 
   return <Outlet />
