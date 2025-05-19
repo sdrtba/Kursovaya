@@ -1,19 +1,31 @@
-.modal {
-  max-width: 600px;
-}
-
-.modal-header {
+.modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.modal-header h3 {
+.modalHeader h3 {
   margin: 0;
+  font-size: 1.25rem;
 }
 
-.modal-header .close {
-  margin-left: auto;
+.modalHeader .close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 5rem; /* увеличенный размер крестика */
+  color: #5d6b89; /* цвет крестика */
+  padding: 4px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.modalHeader .close:hover {
+  transform: scale(1.2);
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .modal-form {
@@ -22,19 +34,17 @@
   gap: 1rem;
 }
 
-.status-success {
-  color: green;
-  text-align: center;
+button {
+  background-color: #5d6b89;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
 }
 
-.status-error {
-  color: crimson;
-  text-align: center;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+tr {
+  border-radius: 4px;
 }

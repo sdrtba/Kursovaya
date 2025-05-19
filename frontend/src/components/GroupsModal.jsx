@@ -63,11 +63,15 @@ export const GroupsModal = ({
                   <span title={group.name}>{group.name}</span>
                 )}
               </td>
-              <td>
+              <td style={{ textAlign: 'right' }}>
                 {editingGroupId === group.id ? (
                   <>
-                    <button onClick={() => handleSave(group.id)}>✅</button>
-                    <button onClick={() => setEditingGroupId(null)}>❌</button>
+                    <button onClick={() => handleSave(group.id)} style={{ margin: '8px 12px' }}>
+                      ✅
+                    </button>
+                    <button onClick={() => setEditingGroupId(null)} style={{ margin: '8px 12px' }}>
+                      ❌
+                    </button>
                   </>
                 ) : (
                   <button
@@ -75,6 +79,7 @@ export const GroupsModal = ({
                       setEditingGroupId(group.id)
                       setEditingName(group.name)
                     }}
+                    style={{ margin: '8px 12px' }}
                   >
                     ✏️
                   </button>
@@ -84,6 +89,7 @@ export const GroupsModal = ({
                     await onDelete(group.id)
                     await getContacts()
                   }}
+                  style={{ margin: '8px 12px' }}
                 >
                   🗑️
                 </button>
